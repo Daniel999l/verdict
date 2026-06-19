@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { VerdictResult } from '@/lib/types'
 import InputView from '@/components/InputView'
 import LoadingView from '@/components/LoadingView'
@@ -9,6 +9,10 @@ import ResultsView from '@/components/ResultsView'
 type View = 'input' | 'loading' | 'results'
 
 export default function Home() {
+  useEffect(() => {
+    pendo.initialize({ visitor: { id: '' } });
+  }, []);
+
   const [view, setView] = useState<View>('input')
   const [idea, setIdea] = useState('')
   const [competitorUrl, setCompetitorUrl] = useState('')
