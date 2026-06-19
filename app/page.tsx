@@ -6,6 +6,14 @@ import InputView from '@/components/InputView'
 import LoadingView from '@/components/LoadingView'
 import ResultsView from '@/components/ResultsView'
 
+declare global {
+  interface Window {
+    pendo?: {
+      track: (eventName: string, properties?: Record<string, string | number | boolean>) => void
+    }
+  }
+}
+
 type View = 'input' | 'loading' | 'results'
 
 export default function Home() {
@@ -19,6 +27,18 @@ export default function Home() {
     if (idea.trim().length < 50) return
     setView('loading')
     setError(null)
+
+    const trimmedUrl = competitorUrl.trim()
+    let competitorDomain = ''
+    if (trimmedUrl) {
+      try { competitorDomain = new URL(trimmedUrl).hostname } catch { /* invalid URL */ }
+    }
+
+    window.pendo?.track('idea_analysis_submitted', {
+      idea_length: idea.trim().length,
+      has_competitor_url: trimmedUrl.length > 0,
+      competitor_url_domain: competitorDomain,
+    })
 
     try {
       const res = await fetch('/api/analyze', {
@@ -41,14 +61,40 @@ export default function Home() {
         const history = JSON.parse(localStorage.getItem('verdict_history') ?? '[]')
         history.unshift(entry)
         localStorage.setItem('verdict_history', JSON.stringify(history.slice(0, 20)))
+
+        window.pendo?.track('analysis_history_saved', {
+          history_count: Math.min(history.length, 20),
+          score: data.score,
+          idea_length: idea.trim().length,
+        })
       } catch {
         // localStorage unavailable in some environments, not critical
       }
+
+      window.pendo?.track('analysis_completed', {
+        score: data.score,
+        score_category: data.score >= 80 ? 'strong' : data.score >= 65 ? 'viable' : data.score >= 40 ? 'uncertain' : 'high_risk',
+        skeptic_rating: data.personas.skeptic.rating,
+        user_rating: data.personas.user.rating,
+        engineer_rating: data.personas.engineer.rating,
+        investor_rating: data.personas.investor.rating,
+        green_flags_count: data.greenFlags.length,
+        red_flags_count: data.redFlags.length,
+        idea_length: idea.trim().length,
+        has_competitor_url: trimmedUrl.length > 0,
+      })
 
       setResult(data)
       setView('results')
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Analysis failed. Try again.'
+
+      window.pendo?.track('analysis_failed', {
+        error_message: msg.substring(0, 100),
+        idea_length: idea.trim().length,
+        has_competitor_url: trimmedUrl.length > 0,
+      })
+
       setError(msg)
       setView('input')
     }
