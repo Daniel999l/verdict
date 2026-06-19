@@ -4,6 +4,12 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Verdict | Does your idea deserve to exist?',
   description: 'Paste your product idea. Get a brutally honest AI verdict in seconds.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', type: 'image/png', sizes: '512x512' },
+    ],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
