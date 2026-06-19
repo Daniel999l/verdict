@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: #f9f9f9; border-left: 3px solid #000000; }
+::-webkit-scrollbar-thumb { background: #000000; border: 2px solid #f9f9f9; }
+
+.neobrutal-shadow     { box-shadow: 6px 6px 0px #000000; }
+.neobrutal-shadow-sm  { box-shadow: 4px 4px 0px #000000; }
+.neobrutal-shadow-lg  { box-shadow: 8px 8px 0px #000000; }
+.neobrutal-border     { border: 3px solid #000000; }
+
+.neobrutal-shadow-hover:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 30s linear infinite; }
